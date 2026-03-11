@@ -269,4 +269,62 @@
     });
   }());
 
+  /* ============================================================
+     7. PORTFOLIO FX — reveal on scroll + magnetic hover + tilt
+     ============================================================ */
+  (function () {
+    var thumbs = document.querySelectorAll('#portfolio .portfolio-thumb');
+    if (!thumbs.length) return;
+
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    thumbs.forEach(function (thumb, index) {
+      thumb.style.animationDelay = (index * 0.16) + 's';
+      thumb.classList.add('portfolio-reveal');
+
+      if (prefersReduced) return;
+
+      thumb.addEventListener('mousemove', function (e) {
+        var rect = thumb.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        var xRatio = (x / rect.width) - 0.5;
+        var yRatio = (y / rect.height) - 0.5;
+        var rx = yRatio * -7;
+        var ry = xRatio * 9;
+        var tx = xRatio * 12;
+        var ty = yRatio * 10 - 7;
+        thumb.style.transform = 'translate3d(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px,0) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+      });
+
+      thumb.addEventListener('mouseenter', function () {
+        thumb.classList.add('is-magnetic');
+      });
+
+      thumb.addEventListener('mouseleave', function () {
+        thumb.classList.remove('is-magnetic');
+        thumb.style.transform = '';
+      });
+    });
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+
+      thumbs.forEach(function (thumb) {
+        observer.observe(thumb);
+      });
+    } else {
+      thumbs.forEach(function (thumb) {
+        thumb.classList.add('is-visible');
+      });
+    }
+  }());
+
 }());
