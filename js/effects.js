@@ -90,43 +90,29 @@
 
 
   /* ============================================================
-     2. GLITCH EFFECT — hero h1
+     2. GLITCH EFFECT — hero h1 (non-destructive)
      ============================================================ */
   (function () {
     var h1 = document.querySelector('#home h1');
     if (!h1) return;
-    var text = h1.textContent;
-    h1.setAttribute('data-text', text);
 
-    /* randomize characters for the glitch burst */
-    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
-    function randomChar() {
-      return chars[Math.floor(Math.random() * chars.length)];
+    h1.setAttribute('data-text', h1.textContent);
+
+    var isRunning = false;
+
+    function triggerGlitch() {
+      if (isRunning) return;
+      isRunning = true;
+      h1.classList.add('is-glitching');
+
+      setTimeout(function () {
+        h1.classList.remove('is-glitching');
+        isRunning = false;
+      }, 720);
     }
 
-    function glitchBurst() {
-      var original = h1.textContent;
-      var iterations = 0;
-      var interval = setInterval(function () {
-        h1.textContent = original
-          .split('')
-          .map(function (c, idx) {
-            if (c === ' ') return ' ';
-            if (idx < iterations) return original[idx];
-            return randomChar();
-          })
-          .join('');
-        iterations += 1.5;
-        if (iterations >= original.length) {
-          h1.textContent = original;
-          clearInterval(interval);
-        }
-      }, 40);
-    }
-
-    /* trigger every ~6 seconds */
-    setTimeout(glitchBurst, 2000);
-    setInterval(glitchBurst, 6000);
+    setTimeout(triggerGlitch, 1800);
+    setInterval(triggerGlitch, 9000);
   }());
 
 
