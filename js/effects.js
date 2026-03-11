@@ -269,4 +269,29 @@
     });
   }());
 
+  /* ============================================================
+     7. PORTFOLIO FX — tilt + parallax reveal
+     ============================================================ */
+  (function () {
+    var thumbs = document.querySelectorAll('#portfolio .portfolio-thumb');
+    if (!thumbs.length) return;
+
+    thumbs.forEach(function (thumb, index) {
+      thumb.style.animationDelay = (index * 0.18) + 's';
+
+      thumb.addEventListener('mousemove', function (e) {
+        var rect = thumb.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        var rx = ((y / rect.height) - 0.5) * -7;
+        var ry = ((x / rect.width) - 0.5) * 9;
+        thumb.style.transform = 'translateY(-7px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+      });
+
+      thumb.addEventListener('mouseleave', function () {
+        thumb.style.transform = '';
+      });
+    });
+  }());
+
 }());
