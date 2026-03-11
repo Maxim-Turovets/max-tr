@@ -280,4 +280,42 @@
     });
   }());
 
+
+  /* ============================================================
+     8. SECTION REVEAL — smooth section appearance on scroll
+     ============================================================ */
+  (function () {
+    var sections = document.querySelectorAll('#fullpage > .section');
+    if (!sections.length) return;
+
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    sections.forEach(function (section, index) {
+      if (index === 0 || prefersReduced) {
+        section.classList.add('is-visible');
+      }
+      section.classList.add('section-animate');
+    });
+
+    if (prefersReduced) return;
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          }
+        });
+      }, { threshold: 0.3, rootMargin: '0px 0px -10% 0px' });
+
+      sections.forEach(function (section) {
+        observer.observe(section);
+      });
+    } else {
+      sections.forEach(function (section) {
+        section.classList.add('is-visible');
+      });
+    }
+  }());
+
 }());
