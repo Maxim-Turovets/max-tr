@@ -285,19 +285,31 @@
      8. SECTION REVEAL — smooth section appearance on scroll
      ============================================================ */
   (function () {
-    var sections = document.querySelectorAll('#fullpage > .section');
-    if (!sections.length) return;
+    var sectionContainers = document.querySelectorAll('#fullpage > .section > .container');
+    if (!sectionContainers.length) return;
 
     var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    sections.forEach(function (section, index) {
+    sectionContainers.forEach(function (container, index) {
       if (index === 0 || prefersReduced) {
-        section.classList.add('is-visible');
+        container.classList.add('is-visible');
       }
-      section.classList.add('section-animate');
+      container.classList.add('section-animate');
     });
 
     if (prefersReduced) return;
+
+    function revealByHash() {
+      var hash = (window.location.hash || '').replace('#', '');
+      if (!hash) return;
+      var activeContainer = document.querySelector('#' + hash + ' > .container');
+      if (activeContainer) {
+        activeContainer.classList.add('is-visible');
+      }
+    }
+
+    window.addEventListener('hashchange', revealByHash);
+    setTimeout(revealByHash, 250);
 
     if ('IntersectionObserver' in window) {
       var observer = new IntersectionObserver(function (entries) {
@@ -306,14 +318,14 @@
             entry.target.classList.add('is-visible');
           }
         });
-      }, { threshold: 0.3, rootMargin: '0px 0px -10% 0px' });
+      }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
 
-      sections.forEach(function (section) {
-        observer.observe(section);
+      sectionContainers.forEach(function (container) {
+        observer.observe(container);
       });
     } else {
-      sections.forEach(function (section) {
-        section.classList.add('is-visible');
+      sectionContainers.forEach(function (container) {
+        container.classList.add('is-visible');
       });
     }
   }());
